@@ -69,5 +69,5 @@ export function sendChatMessage(
 export function submitOrientationForm(
   payload: BackendFormPayload
 ): Promise<BackendChatResponse> {
-  return postJSON<BackendChatResponse>("/api/chat/form", payload);
+  return postJSON<BackendChatResponse>("/api/chat", payload);
 }

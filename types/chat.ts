@@ -21,13 +21,24 @@ export interface BacNote {
   note: number; // sur 20
 }
 
+// types/chat.ts
+
 export interface OrientationFormData {
-  serieBac: string;
-  notes: BacNote[];
-  carriereEnvisagee: string;
-  competences: string[];
-  aUneExperiencePro: boolean;
-  parcoursProfessionnel?: string;
+  serie_bac: string;
+  note_mathematiques: number;
+  note_physique_chimie: number;
+  note_svt_biologie: number;
+  note_francais: number;
+  note_anglais: number;
+  note_histoire_geo: number;
+  note_economie_gestion: number;
+  note_informatique_nsi: number;
+  matieres_preferees: string;
+  competences_declarees: string;
+  centres_interet: string;
+  activites_projets: string;
+  preference_professionnelle: string;
+  environnement_travail_souhaite: string;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -51,9 +62,19 @@ export interface BackendChatRequest {
 
 export interface BackendFormPayload {
   session_id: string | null;
-  serie_bac: string;
-  notes: { matiere: string; note: number }[];
-  carriere_envisagee: string;
-  competences: string[];
-  parcours_professionnel: string | null;
+  serie_bac: string | null,
+  note_mathematiques: Number | null,
+  note_physique_chimie: Number | null,
+  note_svt_biologie: Number | null,
+  note_francais: Number | null,
+  note_anglais: Number | null,
+  note_histoire_geo: Number | null,
+  note_economie_gestion: Number | null,
+  note_informatique_nsi: Number | null,
+  matieres_preferees: string | null,
+  competences_declarees: string | null,
+  centres_interet: string | null,
+  activites_projets: string | null,
+  preference_professionnelle: string | null,
+  environnement_travail_souhaite: string | null,
 }
