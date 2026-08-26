@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { SendIcon } from "./icons";
+import { Send } from "lucide-react";
 
 interface Props {
   onSend: (message: string) => void;
@@ -41,7 +41,7 @@ export default function ChatInput({ onSend, disabled }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex items-end gap-2 border-t border-[#1B2A4A]/10 bg-white px-4 py-3"
+      className="flex items-end gap-2 border-t border-[#078B45]/10 bg-white px-4 py-3"
     >
       <textarea
         ref={textareaRef}
@@ -51,15 +51,15 @@ export default function ChatInput({ onSend, disabled }: Props) {
         disabled={disabled}
         rows={1}
         placeholder="Posez votre question, ex. « Quelle filière pour devenir ingénieur ? »"
-        className="max-h-[120px] flex-1 resize-none rounded-xl border border-[#1B2A4A]/15 bg-[#F7F5F1] px-3.5 py-2.5 text-sm text-[#2E3350] outline-none placeholder:text-[#2E3350]/40 focus:border-[#D4A24C] focus:ring-2 focus:ring-[#D4A24C]/30"
+        className="max-h-[120px] flex-1 resize-none rounded-xl border border-[#078B45]/15 bg-[#F7F5F1] px-3.5 py-2.5 text-sm text-[#2E3350] outline-none placeholder:text-[#2E3350]/40 focus:border-[#078B45] focus:ring-2 focus:ring-[#078B45]/30"
       />
       <button
         type="submit"
         disabled={disabled || !value.trim()}
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1B2A4A] text-[#D4A24C] transition hover:bg-[#152239] disabled:cursor-not-allowed disabled:opacity-40"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#078B45] text-[#D4A24C] transition disabled:cursor-not-allowed disabled:opacity-40"
         aria-label="Envoyer"
       >
-        <SendIcon />
+        <Send className="text-white h-4 w-4" />
       </button>
     </form>
   );

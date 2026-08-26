@@ -2,14 +2,14 @@
 "use client";
 
 import { useState } from "react";
-import type { BacNote, OrientationFormData } from "@/types/chat";
-import { CloseIcon, PlusIcon } from "./icons";
+import type { OrientationFormData } from "@/types/chat";
 
 const SERIES_BAC = [
-  { value: "A", label: "Série A — Littéraire" },
-  { value: "C", label: "Série C — Maths & Sciences Physiques" },
-  { value: "D", label: "Série D — Maths & SVT" },
-  { value: "OSE", label: "Série OSE — Sciences Économiques" },
+  { value: "A", label: "Série A" },
+  { value: "C", label: "Série C" },
+  { value: "D", label: "Série D" },
+  { value: "S", label: "Série S" },
+  { value: "OSE", label: "Série OSE" },
   { value: "TECHNIQUE", label: "Série Technique" },
   { value: "AUTRE", label: "Autre" },
 ];
@@ -20,81 +20,89 @@ interface Props {
 }
 
 export default function OrientationForm({ onSubmit, disabled }: Props) {
-  const [serieBac, setSerieBac] = useState("");
-  const [notes, setNotes] = useState<BacNote[]>([{ matiere: "", note: 10 }]);
-  const [carriereEnvisagee, setCarriereEnvisagee] = useState("");
-  const [competenceInput, setCompetenceInput] = useState("");
-  const [competences, setCompetences] = useState<string[]>([]);
-  const [aUneExperiencePro, setAUneExperiencePro] = useState(false);
-  const [parcoursProfessionnel, setParcoursProfessionnel] = useState("");
+  const [formData, setFormData] = useState({
+    serie_bac: "",
+    note_mathematiques: "",
+    note_physique_chimie: "",
+    note_svt_biologie: "",
+    note_francais: "",
+    note_anglais: "",
+    note_histoire_geo: "",
+    note_economie_gestion: "",
+    note_informatique_nsi: "",
+    matieres_preferees: "",
+    competences_declarees: "",
+    centres_interet: "",
+    activites_projets: "",
+    preference_professionnelle: "",
+    environnement_travail_souhaite: "",
+  });
+
   const [error, setError] = useState<string | null>(null);
 
-  function updateNote(index: number, patch: Partial<BacNote>) {
-    setNotes((prev) => prev.map((n, i) => (i === index ? { ...n, ...patch } : n)));
-  }
-
-  function addNoteRow() {
-    setNotes((prev) => [...prev, { matiere: "", note: 10 }]);
-  }
-
-  function removeNoteRow(index: number) {
-    setNotes((prev) => prev.filter((_, i) => i !== index));
-  }
-
-  function addCompetence() {
-    const val = competenceInput.trim();
-    if (!val) return;
-    if (!competences.includes(val)) setCompetences((prev) => [...prev, val]);
-    setCompetenceInput("");
-  }
-
-  function removeCompetence(val: string) {
-    setCompetences((prev) => prev.filter((c) => c !== val));
-  }
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
 
-    const cleanedNotes = notes.filter((n) => n.matiere.trim().length > 0);
+    // Vérification que TOUS les champs sont remplis
+    for (const [key, value] of Object.entries(formData)) {
+      if (!value.trim()) {
+        setError("Veuillez remplir l'ensemble des champs obligatoires.");
+        return;
+      }
+    }
 
-    if (!serieBac) return setError("Merci de sélectionner votre série de BAC.");
-    if (cleanedNotes.length === 0) return setError("Ajoutez au moins une note.");
-    if (!carriereEnvisagee.trim()) return setError("Indiquez la carrière envisagée.");
-    if (competences.length === 0) return setError("Ajoutez au moins une compétence.");
-
+    // Envoi des données typées
     onSubmit({
-      serieBac,
-      notes: cleanedNotes,
-      carriereEnvisagee: carriereEnvisagee.trim(),
-      competences,
-      aUneExperiencePro,
-      parcoursProfessionnel: aUneExperiencePro ? parcoursProfessionnel.trim() : undefined,
+      serie_bac: formData.serie_bac,
+      note_mathematiques: Number(formData.note_mathematiques),
+      note_physique_chimie: Number(formData.note_physique_chimie),
+      note_svt_biologie: Number(formData.note_svt_biologie),
+      note_francais: Number(formData.note_francais),
+      note_anglais: Number(formData.note_anglais),
+      note_histoire_geo: Number(formData.note_histoire_geo),
+      note_economie_gestion: Number(formData.note_economie_gestion),
+      note_informatique_nsi: Number(formData.note_informatique_nsi),
+      matieres_preferees: formData.matieres_preferees.trim(),
+      competences_declarees: formData.competences_declarees.trim(),
+      centres_interet: formData.centres_interet.trim(),
+      activites_projets: formData.activites_projets.trim(),
+      preference_professionnelle: formData.preference_professionnelle.trim(),
+      environnement_travail_souhaite: formData.environnement_travail_souhaite.trim(),
     });
   }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-md space-y-5 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-[#1B2A4A]/10"
+      className="w-full max-w-lg space-y-5 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-[#078B45]/10 max-h-[85vh] overflow-y-auto"
     >
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-[#D4A24C]">
+        <p className=" font-semibold uppercase tracking-wide text-[#1565C0]">
           Profil bachelier
         </p>
-        <h3 className="mt-0.5 text-base font-semibold text-[#1B2A4A]">
-          Parlez-nous de votre parcours
-        </h3>
+        <p className="text-xs text-gray-500 mt-1">Tous les champs sont obligatoires.</p>
       </div>
 
       {/* Série du BAC */}
       <div className="space-y-1.5">
-        <label className="text-sm font-medium text-[#2E3350]">Série du BAC</label>
+        <label className="text-sm font-medium text-[#2E3350]">
+          Série du BAC <span className="text-red-500">*</span>
+        </label>
         <select
-          value={serieBac}
-          onChange={(e) => setSerieBac(e.target.value)}
+          name="serie_bac"
+          value={formData.serie_bac}
+          onChange={handleChange}
           disabled={disabled}
-          className="w-full rounded-lg border border-[#1B2A4A]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C] focus:ring-2 focus:ring-[#D4A24C]/30"
+          required
+          className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C] focus:ring-2 focus:ring-[#D4A24C]/30"
         >
           <option value="">Sélectionnez votre série</option>
           {SERIES_BAC.map((s) => (
@@ -105,146 +113,277 @@ export default function OrientationForm({ onSubmit, disabled }: Props) {
         </select>
       </div>
 
-      {/* Notes */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-[#2E3350]">Notes principales (/20)</label>
-        <div className="space-y-2">
-          {notes.map((n, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <input
-                type="text"
-                placeholder="Matière (ex. Mathématiques)"
-                value={n.matiere}
-                onChange={(e) => updateNote(i, { matiere: e.target.value })}
-                disabled={disabled}
-                className="flex-1 rounded-lg border border-[#1B2A4A]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C] focus:ring-2 focus:ring-[#D4A24C]/30"
-              />
-              <input
-                type="number"
-                min={0}
-                max={20}
-                step={0.5}
-                value={n.note}
-                onChange={(e) => updateNote(i, { note: Number(e.target.value) })}
-                disabled={disabled}
-                className="w-16 rounded-lg border border-[#1B2A4A]/15 bg-[#F7F5F1] px-2 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C] focus:ring-2 focus:ring-[#D4A24C]/30"
-              />
-              {notes.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeNoteRow(i)}
-                  disabled={disabled}
-                  className="shrink-0 rounded-full p-1.5 text-[#1B2A4A]/50 hover:bg-[#1B2A4A]/5 hover:text-[#1B2A4A]"
-                  aria-label="Supprimer cette matière"
-                >
-                  <CloseIcon />
-                </button>
-              )}
-            </div>
-          ))}
+      {/* Section Notes */}
+      <div className="space-y-3 pt-2 border-t border-gray-100">
+        <h4 className="text-xs font-semibold uppercase text-[#078B45]">Notes scolaires (/20)</h4>
+        
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs text-[#2E3350] font-medium block mb-1">
+              Mathématiques <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              name="note_mathematiques"
+              min={0}
+              max={20}
+              step={0.25}
+              value={formData.note_mathematiques}
+              onChange={handleChange}
+              disabled={disabled}
+              required
+              placeholder="ex. 14"
+              className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C]"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs text-[#2E3350] font-medium block mb-1">
+              Physique - Chimie <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              name="note_physique_chimie"
+              min={0}
+              max={20}
+              step={0.25}
+              value={formData.note_physique_chimie}
+              onChange={handleChange}
+              disabled={disabled}
+              required
+              placeholder="ex. 12.5"
+              className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C]"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs text-[#2E3350] font-medium block mb-1">
+              SVT / Biologie <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              name="note_svt_biologie"
+              min={0}
+              max={20}
+              step={0.25}
+              value={formData.note_svt_biologie}
+              onChange={handleChange}
+              disabled={disabled}
+              required
+              placeholder="ex. 13"
+              className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C]"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs text-[#2E3350] font-medium block mb-1">
+              Français <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              name="note_francais"
+              min={0}
+              max={20}
+              step={0.25}
+              value={formData.note_francais}
+              onChange={handleChange}
+              disabled={disabled}
+              required
+              placeholder="ex. 15"
+              className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C]"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs text-[#2E3350] font-medium block mb-1">
+              Anglais <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              name="note_anglais"
+              min={0}
+              max={20}
+              step={0.25}
+              value={formData.note_anglais}
+              onChange={handleChange}
+              disabled={disabled}
+              required
+              placeholder="ex. 16"
+              className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C]"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs text-[#2E3350] font-medium block mb-1">
+              Histoire - Géo <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              name="note_histoire_geo"
+              min={0}
+              max={20}
+              step={0.25}
+              value={formData.note_histoire_geo}
+              onChange={handleChange}
+              disabled={disabled}
+              required
+              placeholder="ex. 11"
+              className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C]"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs text-[#2E3350] font-medium block mb-1">
+              Économie - Gestion <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              name="note_economie_gestion"
+              min={0}
+              max={20}
+              step={0.25}
+              value={formData.note_economie_gestion}
+              onChange={handleChange}
+              disabled={disabled}
+              required
+              placeholder="ex. 14"
+              className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C]"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs text-[#2E3350] font-medium block mb-1">
+              Informatique / NSI <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              name="note_informatique_nsi"
+              min={0}
+              max={20}
+              step={0.25}
+              value={formData.note_informatique_nsi}
+              onChange={handleChange}
+              disabled={disabled}
+              required
+              placeholder="ex. 17"
+              className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C]"
+            />
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={addNoteRow}
-          disabled={disabled}
-          className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-[#1B2A4A] hover:text-[#D4A24C]"
-        >
-          <PlusIcon className="w-3.5 h-3.5" /> Ajouter une matière
-        </button>
       </div>
 
-      {/* Carrière envisagée */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-[#2E3350]">Carrière envisagée</label>
-        <input
-          type="text"
-          placeholder="ex. Ingénieur logiciel, Comptable, Diplomate..."
-          value={carriereEnvisagee}
-          onChange={(e) => setCarriereEnvisagee(e.target.value)}
-          disabled={disabled}
-          className="w-full rounded-lg border border-[#1B2A4A]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C] focus:ring-2 focus:ring-[#D4A24C]/30"
-        />
-      </div>
+      {/* Section Profil et Aptitudes */}
+      <div className="space-y-3 pt-2 border-t border-gray-100">
+        <h4 className="text-xs font-semibold uppercase text-[#078B45]">Profil & Aptitudes</h4>
 
-      {/* Compétences */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-[#2E3350]">Compétences</label>
-        <div className="flex gap-2">
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-[#2E3350]">
+            Matières préférées <span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
-            placeholder="ex. Leadership, Logique, Rédaction..."
-            value={competenceInput}
-            onChange={(e) => setCompetenceInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                addCompetence();
-              }
-            }}
+            name="matieres_preferees"
+            value={formData.matieres_preferees}
+            onChange={handleChange}
             disabled={disabled}
-            className="flex-1 rounded-lg border border-[#1B2A4A]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C] focus:ring-2 focus:ring-[#D4A24C]/30"
+            required
+            placeholder="ex. Mathématiques, Informatique, Anglais"
+            className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C]"
           />
-          <button
-            type="button"
-            onClick={addCompetence}
-            disabled={disabled}
-            className="rounded-lg bg-[#1B2A4A] px-3 py-2 text-sm font-medium text-white hover:bg-[#152239]"
-          >
-            Ajouter
-          </button>
         </div>
-        {competences.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            {competences.map((c) => (
-              <span
-                key={c}
-                className="inline-flex items-center gap-1 rounded-full bg-[#D4A24C]/15 px-2.5 py-1 text-xs font-medium text-[#1B2A4A]"
-              >
-                {c}
-                <button
-                  type="button"
-                  onClick={() => removeCompetence(c)}
-                  disabled={disabled}
-                  aria-label={`Retirer ${c}`}
-                >
-                  <CloseIcon className="w-3 h-3" />
-                </button>
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
 
-      {/* Parcours professionnel */}
-      <div className="space-y-1.5">
-        <label className="flex items-center gap-2 text-sm font-medium text-[#2E3350]">
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-[#2E3350]">
+            Compétences déclarées <span className="text-red-500">*</span>
+          </label>
           <input
-            type="checkbox"
-            checked={aUneExperiencePro}
-            onChange={(e) => setAUneExperiencePro(e.target.checked)}
+            type="text"
+            name="competences_declarees"
+            value={formData.competences_declarees}
+            onChange={handleChange}
             disabled={disabled}
-            className="h-4 w-4 rounded border-[#1B2A4A]/30 text-[#1B2A4A] focus:ring-[#D4A24C]"
+            required
+            placeholder="ex. Logique, Résolution de problèmes, Communication"
+            className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C]"
           />
-          J&apos;ai déjà un parcours professionnel
-        </label>
-        {aUneExperiencePro && (
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-[#2E3350]">
+            Centres d&apos;intérêt <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="centres_interet"
+            value={formData.centres_interet}
+            onChange={handleChange}
+            disabled={disabled}
+            required
+            placeholder="ex. Jeux vidéo, Musique, Robotique, Économie"
+            className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C]"
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-[#2E3350]">
+            Activités & Projets <span className="text-red-500">*</span>
+          </label>
           <textarea
-            placeholder="Décrivez brièvement votre expérience (stage, emploi, activité...)"
-            value={parcoursProfessionnel}
-            onChange={(e) => setParcoursProfessionnel(e.target.value)}
+            name="activites_projets"
+            value={formData.activites_projets}
+            onChange={handleChange}
             disabled={disabled}
-            rows={3}
-            className="w-full resize-none rounded-lg border border-[#1B2A4A]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C] focus:ring-2 focus:ring-[#D4A24C]/30"
+            required
+            rows={2}
+            placeholder="ex. Création d'un site web, bénévolat, participation à un club de débat..."
+            className="w-full resize-none rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C]"
           />
-        )}
+        </div>
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {/* Section Préférences Professionnelles */}
+      <div className="space-y-3 pt-2 border-t border-gray-100">
+        <h4 className="text-xs font-semibold uppercase text-[#078B45]">Perspectives d&apos;avenir</h4>
+
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-[#2E3350]">
+            Préférence professionnelle <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="preference_professionnelle"
+            value={formData.preference_professionnelle}
+            onChange={handleChange}
+            disabled={disabled}
+            required
+            placeholder="ex. Développeur web, Data Analyst, Chef de projet..."
+            className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C]"
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-[#2E3350]">
+            Environnement de travail souhaité <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="environnement_travail_souhaite"
+            value={formData.environnement_travail_souhaite}
+            onChange={handleChange}
+            disabled={disabled}
+            required
+            placeholder="ex. Startup dynamique, Télétravail, Multinationale, Bureau d'études..."
+            className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C]"
+          />
+        </div>
+      </div>
+
+      {error && <p className="text-sm font-medium text-red-600">{error}</p>}
 
       <button
         type="submit"
         disabled={disabled}
-        className="w-full rounded-lg bg-[#D4A24C] py-2.5 text-sm font-semibold text-[#1B2A4A] transition hover:bg-[#c08f3b] disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-lg bg-[#1565C0] py-2.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60"
       >
         {disabled ? "Envoi en cours..." : "Trouver ma filière"}
       </button>
