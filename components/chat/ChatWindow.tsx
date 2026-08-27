@@ -124,6 +124,7 @@ export default function ChatWindow() {
           role: "assistant",
           kind: "text",
           content: response.message,
+          sources: response.sources,
           createdAt: Date.now(),
         });
 
@@ -161,11 +162,15 @@ export default function ChatWindow() {
           id: makeId(),
           role: "assistant",
           kind: "recommendation",
-          content: response.message,
+          content:
+            response.message ||
+            "Voici les parcours correspondant le mieux à votre profil.",
           recommendations:
             response.recommendations.resultats,
+          sources: response.sources,
           createdAt: Date.now(),
         });
+        return;
       }
     } catch (error) {
       setErrorBanner(

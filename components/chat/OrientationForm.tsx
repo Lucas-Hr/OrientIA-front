@@ -80,10 +80,10 @@ const INTERESTS = [
 const ACTIVITIES = [
   "Aucune activite extrascolaire notable",
   "Benevolat associatif",
-  "Club de robotique ou d'electronique",
+  "Club de robotique ou d&apos;electronique",
   "Concours scientifique ou olympiade",
-  "Creation d'une petite activite commerciale",
-  "Job d'ete en restauration ou hotellerie",
+  "Creation d&apos;une petite activite commerciale",
+  "Job d&apos;ete en restauration ou hotellerie",
   "Participation a un club de debat ou de droit",
   "Participation a un hackathon",
   "Projet de construction ou maquette",
@@ -271,7 +271,7 @@ export default function OrientationForm({
 
     if (formData.centres_interet.length === 0) {
       setError(
-        "Veuillez sélectionner au moins un centre d'intérêt."
+        "Veuillez sélectionner au moins un centre d&apos;intérêt."
       );
       return;
     }
@@ -343,12 +343,12 @@ export default function OrientationForm({
     >
       <div>
         <p className="font-semibold uppercase tracking-wide text-[#1565C0]">
-          Profil d'orientation
+          Profil d&apos;orientation
         </p>
 
         <p className="mt-1 text-xs text-gray-500">
           Ces informations seront utilisées par le modèle
-          d'orientation pour vous proposer les parcours les
+          d&apos;orientation pour vous proposer les parcours les
           plus adaptés.
         </p>
       </div>
@@ -488,7 +488,7 @@ export default function OrientationForm({
         </div>
       </section>
 
-      {/* Centres d'intérêt */}
+      {/* Centres d&apos;intérêt */}
       <section className="space-y-3 border-t border-gray-100 pt-4">
         <h3 className="text-xs font-semibold uppercase text-[#078B45]">
           Centres d&apos;intérêt

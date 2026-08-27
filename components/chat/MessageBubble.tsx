@@ -4,6 +4,7 @@ import type {
   ChatMessage,
   OrientationFormData,
   Recommendation,
+  Source,
 } from "@/types/chat";
 
 import {
@@ -66,9 +67,18 @@ export default function MessageBubble({
             }
           />
         ) : (
-          <p className="whitespace-pre-wrap">
-            {message.content}
-          </p>
+          <>
+            <p className="whitespace-pre-wrap">
+              {message.content}
+            </p>
+
+            {message.sources &&
+              message.sources.length > 0 && (
+                <SourceList
+                  sources={message.sources}
+                />
+              )}
+          </>
         )}
       </div>
     </div>
@@ -229,6 +239,53 @@ function FormSummary({
           </span>{" "}
           {data.environnement_travail_souhaite}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function SourceList({
+  sources,
+}: {
+  sources: Source[];
+}) {
+  return (
+    <div className="mt-4 border-t border-gray-200 pt-3">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#1565C0]">
+        Sources
+      </p>
+
+      <div className="space-y-2">
+        {sources.map((source, index) => (
+          <div
+            key={
+              source.id ??
+              `${source.title}-${index}`
+            }
+            className="rounded-lg bg-[#F7F5F1] p-2 text-xs"
+          >
+            {source.url ? (
+              <a
+                href={source.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-[#1565C0] underline"
+              >
+                {source.title}
+              </a>
+            ) : (
+              <p className="font-medium text-[#2E3350]">
+                {source.title}
+              </p>
+            )}
+
+            {source.excerpt && (
+              <p className="mt-1 text-gray-500">
+                {source.excerpt}
+              </p>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
