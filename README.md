@@ -18,3 +18,6 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 # Lien Drive test formulaire avec swageer : 
 https://drive.google.com/file/d/1zcKf1iVF5OBCfjRHiQJp_hxL3FvNL_V-/view?usp=drive_link
+
+# Lien Drive Test RAG : 
+https://drive.google.com/file/d/1YM5_VkBlqPP72gKKQy9BFp_UxP9vvRGx/view?usp=drive_link
