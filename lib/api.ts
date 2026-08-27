@@ -1,23 +1,15 @@
 // lib/api.ts
 
-/**
- * Toute la logique réseau vers le backend FastAPI
- * est centralisée ici.
- */
-
 import type {
   BackendChatResponse,
   BackendFormPayload,
-  BackendOrientationResponse,
+  OrientationFormData,
 } from "@/types/chat";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
-  "http://127.0.0.1:8000";
+  "https://localhost:8000";
 
-/**
- * Erreur provenant de l'API.
- */
 export class ApiError extends Error {
   status: number;
 
@@ -28,17 +20,14 @@ export class ApiError extends Error {
   }
 }
 
-/**
- * Fonction générique POST JSON.
- */
 async function postJSON<T>(
   path: string,
   body: unknown
 ): Promise<T> {
-  let res: Response;
+  let response: Response;
 
   try {
-    res = await fetch(`${API_BASE_URL}${path}`, {
+    response = await fetch(`${API_BASE_URL}${path}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -52,51 +41,55 @@ async function postJSON<T>(
     );
   }
 
-  if (!res.ok) {
-    const errText = await res.text().catch(() => "");
+  if (!response.ok) {
+    let message = `Erreur serveur (${response.status})`;
 
-    throw new ApiError(
-      errText || `Erreur serveur (${res.status})`,
-      res.status
-    );
+    try {
+      const data = await response.json();
+
+      if (typeof data?.detail === "string") {
+        message = data.detail;
+      }
+    } catch {
+      // On conserve le message générique.
+    }
+
+    throw new ApiError(message, response.status);
   }
 
-  return res.json() as Promise<T>;
+  return response.json() as Promise<T>;
 }
 
 /**
- * Envoie un message conversationnel au backend.
+ * Envoie un message au chatbot.
  *
- * Le backend décide :
- *
- * - type = "text"
- *      → réponse normale, généralement RAG
- *
- * - type = "form_request"
- *      → le frontend doit afficher le formulaire
+ * Le backend détermine ensuite s'il s'agit :
+ * - d'une réponse générale ;
+ * - d'une demande de formulaire ;
+ * - d'une recommandation.
  */
 export function sendChatMessage(
   message: string,
   sessionId: string | null
 ): Promise<BackendChatResponse> {
-  return postJSON<BackendChatResponse>("/chat", {
+  return postJSON<BackendChatResponse>("/api/chat", {
     message,
     session_id: sessionId,
   });
 }
 
 /**
- * Envoie le profil complet au moteur d'orientation ML.
- *
- * Endpoint backend :
- *
- * POST /orientation/recommend
+ * Envoie le profil complet au backend pour obtenir
+ * une recommandation personnalisée.
  */
 export function submitOrientationForm(
-  payload: BackendFormPayload
-): Promise<BackendOrientationResponse> {
-  return postJSON<BackendOrientationResponse>(
-    "/orientation/recommend",
-    payload
-  );
+  data: OrientationFormData,
+  sessionId: string | null
+): Promise<BackendChatResponse> {
+  return postJSON<BackendChatResponse>("/api/chat", {
+    message:
+      "Voici mon profil d'orientation. Je souhaite recevoir une recommandation de parcours.",
+    session_id: sessionId,
+    profile: data,
+  });
 }

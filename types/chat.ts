@@ -3,43 +3,31 @@
 export type Role = "user" | "assistant";
 
 /**
- * Types de contenu pouvant être affichés dans le chat.
+ * Type de contenu affiché dans une bulle de chat.
  */
 export type MessageKind =
   | "text"
   | "form_request"
   | "form_summary"
-  | "orientation_result";
+  | "recommendation";
 
+/**
+ * Message affiché dans l'interface.
+ */
 export interface ChatMessage {
   id: string;
   role: Role;
   kind: MessageKind;
-
-  /**
-   * Texte à afficher pour les messages normaux
-   * ou le message introductif du formulaire.
-   */
   content?: string;
-
-  /**
-   * Données du formulaire après soumission.
-   */
   formData?: OrientationFormData;
-
-  /**
-   * Résultat ML après recommandation.
-   */
-  orientationResult?: OrientationResult;
-
+  recommendations?: Recommendation[];
   createdAt: number;
 }
 
 /**
- * Données du formulaire d'orientation.
+ * Profil complet envoyé au moteur d'orientation.
  *
- * Ces noms correspondent directement au ProfileRequest
- * du backend FastAPI.
+ * Ces champs correspondent aux entrées utilisées par le modèle ML.
  */
 export interface OrientationFormData {
   serie_bac: string;
@@ -63,83 +51,68 @@ export interface OrientationFormData {
 }
 
 /**
- * Recommandation individuelle produite par le modèle ML.
+ * Une recommandation retournée par le modèle.
  */
-export interface OrientationRecommendation {
+export interface Recommendation {
   parcours: string;
   probabilite: number;
 }
 
 /**
- * Résultat retourné par le backend d'orientation.
+ * Résultat complet du modèle ML.
  */
-export interface OrientationResult {
+export interface MLResult {
   source: string;
   modele: string;
-  resultats: OrientationRecommendation[];
+  resultats: Recommendation[];
 }
 
 /**
- * Types de réponses du endpoint /chat.
+ * Types réellement utilisés par le backend.
  */
 export type BackendResponseType =
-  | "text"
-  | "form_request";
+  | "answer"
+  | "formrequest"
+  | "recommendation";
 
 /**
- * Réponse du backend après un message utilisateur.
+ * Réponse du POST /api/chat.
  */
 export interface BackendChatResponse {
   type: BackendResponseType;
 
-  /**
-   * Message textuel du backend.
-   *
-   * Pour form_request, il sert de présentation
-   * avant l'affichage du formulaire.
-   */
-  content?: string;
+  message: string;
 
   session_id: string;
+
+  sources: Source[];
+
+  recommendations: MLResult | null;
+
+  confidence: number | null;
+
+  uncertainty: string | null;
+
+  missing_information: string[];
 }
 
 /**
- * Requête envoyée à POST /chat.
+ * Source documentaire retournée par le RAG.
+ */
+export interface Source {
+  id?: string | null;
+  title: string;
+  url?: string | null;
+  source_type?: string | null;
+  consulted_at?: string | null;
+  excerpt?: string | null;
+}
+
+/**
+ * Requête envoyée à POST /api/chat.
  */
 export interface BackendChatRequest {
   message: string;
   session_id: string | null;
-}
-
-/**
- * Requête envoyée à POST /orientation/recommend.
- *
- * Elle correspond au ProfileRequest Python.
- */
-export interface BackendFormPayload {
-  serie_bac: string | null;
-
-  note_mathematiques: number | null;
-  note_physique_chimie: number | null;
-  note_svt_biologie: number | null;
-  note_francais: number | null;
-  note_anglais: number | null;
-  note_histoire_geo: number | null;
-  note_economie_gestion: number | null;
-  note_informatique_nsi: number | null;
-
-  matieres_preferees: string[];
-  competences_declarees: string[];
-  centres_interet: string[];
-  activites_projets: string[];
-
-  preference_professionnelle: string | null;
-  environnement_travail_souhaite: string | null;
-}
-
-/**
- * Réponse de POST /orientation/recommend.
- */
-export interface BackendOrientationResponse {
-  recommendations: OrientationResult;
+  profile?: OrientationFormData | null;
 }

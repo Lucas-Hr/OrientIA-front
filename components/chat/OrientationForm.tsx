@@ -5,435 +5,196 @@
 import { useState } from "react";
 import type { OrientationFormData } from "@/types/chat";
 
-const SERIES_BAC = [
-  { value: "A2", label: "A2" },
-  { value: "C", label: "C" },
-  { value: "D", label: "D" },
-  { value: "S", label: "S" },
-  {
-    value: "Techniques_agricoles",
-    label: "Techniques agricoles",
-  },
-  {
-    value: "Toute_serie",
-    label: "Toute série",
-  },
-];
-
-const MATIERES = [
-  { value: "Anglais", label: "Anglais" },
-  {
-    value: "Economie_Gestion",
-    label: "Économie / Gestion",
-  },
-  { value: "Francais", label: "Français" },
-  {
-    value: "Histoire_Geo",
-    label: "Histoire-Géographie",
-  },
-  {
-    value: "Informatique_NSI",
-    label: "Informatique / NSI",
-  },
-  {
-    value: "Mathematiques",
-    label: "Mathématiques",
-  },
-  {
-    value: "Physique_Chimie",
-    label: "Physique-Chimie",
-  },
-  {
-    value: "SVT_Biologie",
-    label: "SVT / Biologie",
-  },
-];
-
-const COMPETENCES = [
-  {
-    value: "analyse_de_donnees",
-    label: "Analyse de données",
-  },
-  {
-    value: "communication",
-    label: "Communication",
-  },
-  {
-    value: "creativite",
-    label: "Créativité",
-  },
-  {
-    value: "dessin_technique",
-    label: "Dessin technique",
-  },
-  {
-    value: "esprit_d_analyse_financiere",
-    label: "Analyse financière",
-  },
-  {
-    value: "expression_orale",
-    label: "Expression orale",
-  },
-  {
-    value: "gestion_de_projet",
-    label: "Gestion de projet",
-  },
-  {
-    value: "gout_du_terrain",
-    label: "Goût du terrain",
-  },
-  {
-    value: "langues_etrangeres",
-    label: "Langues étrangères",
-  },
-  {
-    value: "leadership",
-    label: "Leadership",
-  },
-  {
-    value: "manipulation_de_laboratoire",
-    label: "Manipulation de laboratoire",
-  },
-  {
-    value: "negociation",
-    label: "Négociation",
-  },
-  {
-    value: "programmation",
-    label: "Programmation",
-  },
-  {
-    value: "resolution_de_problemes",
-    label: "Résolution de problèmes",
-  },
-  {
-    value: "rigueur_scientifique",
-    label: "Rigueur scientifique",
-  },
-  {
-    value: "sens_commercial",
-    label: "Sens commercial",
-  },
-  {
-    value: "sens_de_l_organisation",
-    label: "Sens de l&apos;organisation",
-  },
-  {
-    value: "sensibilite_environnementale",
-    label: "Sensibilité environnementale",
-  },
-  {
-    value: "service_client",
-    label: "Service client",
-  },
-  {
-    value: "travail_d_equipe",
-    label: "Travail d&apos;équipe",
-  },
-];
-
-const CENTRES_INTERET = [
-  {
-    value: "actualite_economique",
-    label: "Actualité économique",
-  },
-  {
-    value: "agriculture",
-    label: "Agriculture",
-  },
-  {
-    value: "architecture_design",
-    label: "Architecture / Design",
-  },
-  {
-    value: "art_et_creation",
-    label: "Art et création",
-  },
-  {
-    value: "cuisine",
-    label: "Cuisine",
-  },
-  {
-    value: "droit_justice",
-    label: "Droit / Justice",
-  },
-  {
-    value: "electronique",
-    label: "Électronique",
-  },
-  {
-    value: "entrepreneuriat",
-    label: "Entrepreneuriat",
-  },
-  {
-    value: "finance",
-    label: "Finance",
-  },
-  {
-    value: "intelligence_artificielle",
-    label: "Intelligence artificielle",
-  },
-  {
-    value: "jeux_video",
-    label: "Jeux vidéo",
-  },
-  {
-    value: "mecanique_bricolage",
-    label: "Mécanique / Bricolage",
-  },
-  {
-    value: "nature_environnement",
-    label: "Nature / Environnement",
-  },
-  {
-    value: "nouvelles_technologies",
-    label: "Nouvelles technologies",
-  },
-  {
-    value: "reseaux_sociaux",
-    label: "Réseaux sociaux",
-  },
-  {
-    value: "sante",
-    label: "Santé",
-  },
-  {
-    value: "sciences",
-    label: "Sciences",
-  },
-  {
-    value: "sport",
-    label: "Sport",
-  },
-  {
-    value: "tourisme_culture",
-    label: "Tourisme / Culture",
-  },
-  {
-    value: "voyage",
-    label: "Voyage",
-  },
-];
-
-const ACTIVITES = [
-  {
-    value: "Aucune activite extrascolaire notable",
-    label: "Aucune activité extrascolaire notable",
-  },
-  {
-    value: "Benevolat associatif",
-    label: "Bénévolat associatif",
-  },
-  {
-    value: "Club de robotique ou d&apos;electronique",
-    label: "Club de robotique ou d&apos;électronique",
-  },
-  {
-    value: "Concours scientifique ou olympiade",
-    label: "Concours scientifique ou olympiade",
-  },
-  {
-    value: "Creation d&apos;une petite activite commerciale",
-    label: "Création d&apos;une petite activité commerciale",
-  },
-  {
-    value: "Job d&apos;ete en restauration ou hotellerie",
-    label: "Job d&apos;été en restauration ou hôtellerie",
-  },
-  {
-    value: "Participation a un club de debat ou de droit",
-    label: "Club de débat ou de droit",
-  },
-  {
-    value: "Participation a un hackathon",
-    label: "Participation à un hackathon",
-  },
-  {
-    value: "Projet de construction ou maquette",
-    label: "Projet de construction ou maquette",
-  },
-  {
-    value: "Projet informatique personnel",
-    label: "Projet informatique personnel",
-  },
-  {
-    value: "Stage en entreprise",
-    label: "Stage en entreprise",
-  },
-  {
-    value: "Stage en exploitation agricole",
-    label: "Stage en exploitation agricole",
-  },
-  {
-    value: "Stage en laboratoire",
-    label: "Stage en laboratoire",
-  },
-  {
-    value: "Voyage linguistique",
-    label: "Voyage linguistique",
-  },
-];
-
-const PROFESSIONAL_PREFERENCES = [
-  {
-    value: "Creer sa propre entreprise",
-    label: "Créer ma propre entreprise",
-  },
-  {
-    value: "Pas encore de preference claire",
-    label: "Je n&apos;ai pas encore de préférence claire",
-  },
-  {
-    value: "Poursuivre en recherche ou en doctorat",
-    label: "Poursuivre en recherche ou en doctorat",
-  },
-  {
-    value: "Travailler a l&apos;international",
-    label: "Travailler à l&apos;international",
-  },
-  {
-    value: "Travailler dans la fonction publique",
-    label: "Travailler dans la fonction publique",
-  },
-  {
-    value:
-      "Travailler dans une ONG ou une structure a impact social",
-    label: "Travailler dans une ONG / structure à impact social",
-  },
-  {
-    value: "Travailler dans une grande entreprise",
-    label: "Travailler dans une grande entreprise",
-  },
-];
-
-const WORK_ENVIRONMENTS = [
-  {
-    value: "atelier_chantier",
-    label: "Atelier / chantier",
-  },
-  {
-    value: "bureau",
-    label: "Bureau",
-  },
-  {
-    value: "contact_client",
-    label: "Contact avec les clients",
-  },
-  {
-    value: "laboratoire",
-    label: "Laboratoire",
-  },
-  {
-    value: "mixte",
-    label: "Environnement mixte",
-  },
-  {
-    value: "terrain",
-    label: "Terrain",
-  },
-];
-
 interface Props {
   onSubmit: (data: OrientationFormData) => void;
   disabled?: boolean;
 }
 
-interface MultiSelectProps {
-  title: string;
-  values: { value: string; label: string }[];
-  selected: string[];
-  onChange: (values: string[]) => void;
-  disabled?: boolean;
+const SERIES_BAC = [
+  { value: "A", label: "Série A" },
+  { value: "C", label: "Série C" },
+  { value: "D", label: "Série D" },
+  { value: "S", label: "Série S" },
+  { value: "OSE", label: "Série OSE" },
+  { value: "TECHNIQUE", label: "Série Technique" },
+  { value: "AUTRE", label: "Autre" },
+];
+
+const SUBJECTS = [
+  "Anglais",
+  "Economie_Gestion",
+  "Francais",
+  "Histoire_Geo",
+  "Informatique_NSI",
+  "Mathematiques",
+  "Physique_Chimie",
+  "SVT_Biologie",
+];
+
+const SKILLS = [
+  "analyse_de_donnees",
+  "communication",
+  "creativite",
+  "dessin_technique",
+  "esprit_d_analyse_financiere",
+  "expression_orale",
+  "gestion_de_projet",
+  "gout_du_terrain",
+  "langues_etrangeres",
+  "leadership",
+  "manipulation_de_laboratoire",
+  "negociation",
+  "programmation",
+  "resolution_de_problemes",
+  "rigueur_scientifique",
+  "sens_commercial",
+  "sens_de_l_organisation",
+  "sensibilite_environnementale",
+  "service_client",
+  "travail_d_equipe",
+];
+
+const INTERESTS = [
+  "actualite_economique",
+  "agriculture",
+  "architecture_design",
+  "art_et_creation",
+  "cuisine",
+  "droit_justice",
+  "electronique",
+  "entrepreneuriat",
+  "finance",
+  "intelligence_artificielle",
+  "jeux_video",
+  "mecanique_bricolage",
+  "nature_environnement",
+  "nouvelles_technologies",
+  "reseaux_sociaux",
+  "sante",
+  "sciences",
+  "sport",
+  "tourisme_culture",
+  "voyage",
+];
+
+const ACTIVITIES = [
+  "Aucune activite extrascolaire notable",
+  "Benevolat associatif",
+  "Club de robotique ou d'electronique",
+  "Concours scientifique ou olympiade",
+  "Creation d'une petite activite commerciale",
+  "Job d'ete en restauration ou hotellerie",
+  "Participation a un club de debat ou de droit",
+  "Participation a un hackathon",
+  "Projet de construction ou maquette",
+  "Projet informatique personnel",
+  "Stage en entreprise",
+  "Stage en exploitation agricole",
+  "Stage en laboratoire",
+  "Voyage linguistique",
+];
+
+const PROFESSIONAL_PREFERENCES = [
+  {
+    value: "recherche",
+    label: "Poursuivre en recherche ou en doctorat",
+  },
+  {
+    value: "grande entreprise",
+    label: "Travailler dans une grande entreprise",
+  },
+];
+
+const WORK_ENVIRONMENTS = [
+  { value: "bureau", label: "Bureau" },
+  { value: "laboratoire", label: "Laboratoire" },
+  { value: "terrain", label: "Terrain" },
+  { value: "atelier", label: "Atelier" },
+  { value: "teletravail", label: "Télétravail" },
+];
+
+interface FormState {
+  serie_bac: string;
+
+  note_mathematiques: string;
+  note_physique_chimie: string;
+  note_svt_biologie: string;
+  note_francais: string;
+  note_anglais: string;
+  note_histoire_geo: string;
+  note_economie_gestion: string;
+  note_informatique_nsi: string;
+
+  matieres_preferees: string[];
+  competences_declarees: string[];
+  centres_interet: string[];
+  activites_projets: string[];
+
+  preference_professionnelle: string;
+  environnement_travail_souhaite: string;
 }
 
-function MultiSelect({
-  title,
-  values,
-  selected,
-  onChange,
-  disabled,
-}: MultiSelectProps) {
-  function toggle(value: string) {
-    if (selected.includes(value)) {
-      onChange(selected.filter((item) => item !== value));
-    } else {
-      onChange([...selected, value]);
-    }
+const INITIAL_FORM: FormState = {
+  serie_bac: "",
+
+  note_mathematiques: "",
+  note_physique_chimie: "",
+  note_svt_biologie: "",
+  note_francais: "",
+  note_anglais: "",
+  note_histoire_geo: "",
+  note_economie_gestion: "",
+  note_informatique_nsi: "",
+
+  matieres_preferees: [],
+  competences_declarees: [],
+  centres_interet: [],
+  activites_projets: [],
+
+  preference_professionnelle: "",
+  environnement_travail_souhaite: "",
+};
+
+function labelize(value: string): string {
+  return value
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function toggleValue(
+  values: string[],
+  value: string
+): string[] {
+  if (values.includes(value)) {
+    return values.filter((item) => item !== value);
   }
 
+  return [...values, value];
+}
+
+function isValidNote(value: string): boolean {
+  if (!value.trim()) {
+    return false;
+  }
+
+  const number = Number(value);
+
   return (
-    <div className="space-y-2">
-      <label className="text-sm font-medium text-[#2E3350]">
-        {title} <span className="text-red-500">*</span>
-      </label>
-
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        {values.map((item) => {
-          const checked = selected.includes(item.value);
-
-          return (
-            <label
-              key={item.value}
-              className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-xs transition ${
-                checked
-                  ? "border-[#078B45] bg-[#078B45]/10 text-[#078B45]"
-                  : "border-gray-200 bg-[#F7F5F1] text-[#2E3350]"
-              } ${
-                disabled
-                  ? "cursor-not-allowed opacity-60"
-                  : ""
-              }`}
-            >
-              <input
-                type="checkbox"
-                checked={checked}
-                onChange={() => toggle(item.value)}
-                disabled={disabled}
-                className="accent-[#078B45]"
-              />
-
-              <span>{item.label}</span>
-            </label>
-          );
-        })}
-      </div>
-
-      {selected.length > 0 && (
-        <p className="text-xs text-gray-500">
-          {selected.length} sélectionnée
-          {selected.length > 1 ? "s" : ""}
-        </p>
-      )}
-    </div>
+    Number.isFinite(number) &&
+    number >= 0 &&
+    number <= 20
   );
 }
 
 export default function OrientationForm({
   onSubmit,
-  disabled,
+  disabled = false,
 }: Props) {
-  const [formData, setFormData] = useState({
-    serie_bac: "",
+  const [formData, setFormData] =
+    useState<FormState>(INITIAL_FORM);
 
-    note_mathematiques: "",
-    note_physique_chimie: "",
-    note_svt_biologie: "",
-    note_francais: "",
-    note_anglais: "",
-    note_histoire_geo: "",
-    note_economie_gestion: "",
-    note_informatique_nsi: "",
-
-    matieres_preferees: [] as string[],
-    competences_declarees: [] as string[],
-    centres_interet: [] as string[],
-    activites_projets: [] as string[],
-
-    preference_professionnelle: "",
-    environnement_travail_souhaite: "",
-  });
-
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] =
+    useState<string | null>(null);
 
   function handleTextChange(
     e: React.ChangeEvent<
@@ -442,14 +203,33 @@ export default function OrientationForm({
   ) {
     const { name, value } = e.target;
 
-    setFormData((prev) => ({
-      ...prev,
+    setFormData((previous) => ({
+      ...previous,
       [name]: value,
     }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  function handleMultiChange(
+    field:
+      | "matieres_preferees"
+      | "competences_declarees"
+      | "centres_interet"
+      | "activites_projets",
+    value: string
+  ) {
+    setFormData((previous) => ({
+      ...previous,
+      [field]: toggleValue(
+        previous[field],
+        value
+      ),
+    }));
+  }
+
+  function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
     setError(null);
 
     const notes = [
@@ -468,20 +248,9 @@ export default function OrientationForm({
       return;
     }
 
-    if (notes.some((note) => note.trim() === "")) {
-      setError("Veuillez renseigner toutes vos notes.");
-      return;
-    }
-
-    if (
-      notes.some(
-        (note) =>
-          Number(note) < 0 ||
-          Number(note) > 20
-      )
-    ) {
+    if (notes.some((note) => !isValidNote(note))) {
       setError(
-        "Les notes doivent être comprises entre 0 et 20."
+        "Toutes les notes doivent être renseignées entre 0 et 20."
       );
       return;
     }
@@ -502,7 +271,7 @@ export default function OrientationForm({
 
     if (formData.centres_interet.length === 0) {
       setError(
-        "Veuillez sélectionner au moins un centre d&apos;intérêt."
+        "Veuillez sélectionner au moins un centre d'intérêt."
       );
       return;
     }
@@ -516,41 +285,37 @@ export default function OrientationForm({
 
     if (!formData.preference_professionnelle) {
       setError(
-        "Veuillez sélectionner votre préférence professionnelle."
+        "Veuillez sélectionner une préférence professionnelle."
       );
       return;
     }
 
     if (!formData.environnement_travail_souhaite) {
       setError(
-        "Veuillez sélectionner votre environnement de travail."
+        "Veuillez sélectionner un environnement de travail."
       );
       return;
     }
 
-    onSubmit({
+    const data: OrientationFormData = {
       serie_bac: formData.serie_bac,
 
-      note_mathematiques: Number(
-        formData.note_mathematiques
-      ),
-      note_physique_chimie: Number(
-        formData.note_physique_chimie
-      ),
-      note_svt_biologie: Number(
-        formData.note_svt_biologie
-      ),
-      note_francais: Number(formData.note_francais),
-      note_anglais: Number(formData.note_anglais),
-      note_histoire_geo: Number(
-        formData.note_histoire_geo
-      ),
-      note_economie_gestion: Number(
-        formData.note_economie_gestion
-      ),
-      note_informatique_nsi: Number(
-        formData.note_informatique_nsi
-      ),
+      note_mathematiques:
+        Number(formData.note_mathematiques),
+      note_physique_chimie:
+        Number(formData.note_physique_chimie),
+      note_svt_biologie:
+        Number(formData.note_svt_biologie),
+      note_francais:
+        Number(formData.note_francais),
+      note_anglais:
+        Number(formData.note_anglais),
+      note_histoire_geo:
+        Number(formData.note_histoire_geo),
+      note_economie_gestion:
+        Number(formData.note_economie_gestion),
+      note_informatique_nsi:
+        Number(formData.note_informatique_nsi),
 
       matieres_preferees:
         formData.matieres_preferees,
@@ -563,100 +328,79 @@ export default function OrientationForm({
 
       preference_professionnelle:
         formData.preference_professionnelle,
+
       environnement_travail_souhaite:
         formData.environnement_travail_souhaite,
-    });
-  }
+    };
 
-  const inputClass =
-    "w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350] outline-none focus:border-[#D4A24C] focus:ring-2 focus:ring-[#D4A24C]/30";
+    onSubmit(data);
+  }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-2xl space-y-5 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-[#078B45]/10 max-h-[85vh] overflow-y-auto"
+      className="w-full max-w-2xl max-h-[85vh] overflow-y-auto space-y-6 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-[#078B45]/10"
     >
       <div>
         <p className="font-semibold uppercase tracking-wide text-[#1565C0]">
-          Profil bachelier
+          Profil d'orientation
         </p>
 
         <p className="mt-1 text-xs text-gray-500">
-          Ces informations permettent à notre modèle
-          d&apos;analyser votre profil et de proposer les
-          parcours les plus adaptés.
+          Ces informations seront utilisées par le modèle
+          d'orientation pour vous proposer les parcours les
+          plus adaptés.
         </p>
       </div>
 
-      {/* Série du BAC */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-[#2E3350]">
-          Série du BAC{" "}
-          <span className="text-red-500">*</span>
-        </label>
+      {/* Série BAC */}
+      <section className="space-y-2">
+        <h3 className="text-xs font-semibold uppercase text-[#078B45]">
+          Série du BAC
+        </h3>
 
         <select
           name="serie_bac"
           value={formData.serie_bac}
           onChange={handleTextChange}
           disabled={disabled}
-          required
-          className={inputClass}
+          className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350]"
         >
           <option value="">
             Sélectionnez votre série
           </option>
 
-          {SERIES_BAC.map((item) => (
+          {SERIES_BAC.map((serie) => (
             <option
-              key={item.value}
-              value={item.value}
+              key={serie.value}
+              value={serie.value}
             >
-              {item.label}
+              {serie.label}
             </option>
           ))}
         </select>
-      </div>
+      </section>
 
       {/* Notes */}
-      <div className="space-y-3 border-t border-gray-100 pt-2">
-        <h4 className="text-xs font-semibold uppercase text-[#078B45]">
+      <section className="space-y-3 border-t border-gray-100 pt-4">
+        <h3 className="text-xs font-semibold uppercase text-[#078B45]">
           Notes scolaires (/20)
-        </h4>
+        </h3>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {[
-            [
-              "note_mathematiques",
-              "Mathématiques",
-            ],
-            [
-              "note_physique_chimie",
-              "Physique-Chimie",
-            ],
-            [
-              "note_svt_biologie",
-              "SVT / Biologie",
-            ],
+            ["note_mathematiques", "Mathématiques"],
+            ["note_physique_chimie", "Physique - Chimie"],
+            ["note_svt_biologie", "SVT / Biologie"],
             ["note_francais", "Français"],
             ["note_anglais", "Anglais"],
-            [
-              "note_histoire_geo",
-              "Histoire-Géographie",
-            ],
-            [
-              "note_economie_gestion",
-              "Économie-Gestion",
-            ],
-            [
-              "note_informatique_nsi",
-              "Informatique / NSI",
-            ],
+            ["note_histoire_geo", "Histoire - Géo"],
+            ["note_economie_gestion", "Économie - Gestion"],
+            ["note_informatique_nsi", "Informatique / NSI"],
           ].map(([name, label]) => (
             <div key={name}>
               <label className="mb-1 block text-xs font-medium text-[#2E3350]">
-                {label}{" "}
-                <span className="text-red-500">*</span>
+                {label}
               </label>
 
               <input
@@ -667,110 +411,156 @@ export default function OrientationForm({
                 step={0.25}
                 value={
                   formData[
-                    name as keyof typeof formData
+                    name as keyof FormState
                   ] as string
                 }
                 onChange={handleTextChange}
                 disabled={disabled}
-                required
                 placeholder="ex. 14"
-                className={inputClass}
+                className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm text-[#2E3350]"
               />
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* Matières */}
-      <div className="space-y-3 border-t border-gray-100 pt-2">
-        <h4 className="text-xs font-semibold uppercase text-[#078B45]">
+      <section className="space-y-3 border-t border-gray-100 pt-4">
+        <h3 className="text-xs font-semibold uppercase text-[#078B45]">
           Matières préférées
-        </h4>
+        </h3>
 
-        <MultiSelect
-          title="Sélectionnez les matières que vous appréciez"
-          values={MATIERES}
-          selected={formData.matieres_preferees}
-          onChange={(values) =>
-            setFormData((prev) => ({
-              ...prev,
-              matieres_preferees: values,
-            }))
-          }
-          disabled={disabled}
-        />
-      </div>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {SUBJECTS.map((subject) => (
+            <label
+              key={subject}
+              className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-100 p-2 text-sm hover:bg-gray-50"
+            >
+              <input
+                type="checkbox"
+                checked={formData.matieres_preferees.includes(
+                  subject
+                )}
+                onChange={() =>
+                  handleMultiChange(
+                    "matieres_preferees",
+                    subject
+                  )
+                }
+                disabled={disabled}
+              />
+
+              <span>{labelize(subject)}</span>
+            </label>
+          ))}
+        </div>
+      </section>
 
       {/* Compétences */}
-      <div className="space-y-3 border-t border-gray-100 pt-2">
-        <h4 className="text-xs font-semibold uppercase text-[#078B45]">
+      <section className="space-y-3 border-t border-gray-100 pt-4">
+        <h3 className="text-xs font-semibold uppercase text-[#078B45]">
           Compétences
-        </h4>
+        </h3>
 
-        <MultiSelect
-          title="Sélectionnez vos principales compétences"
-          values={COMPETENCES}
-          selected={formData.competences_declarees}
-          onChange={(values) =>
-            setFormData((prev) => ({
-              ...prev,
-              competences_declarees: values,
-            }))
-          }
-          disabled={disabled}
-        />
-      </div>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {SKILLS.map((skill) => (
+            <label
+              key={skill}
+              className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-100 p-2 text-sm hover:bg-gray-50"
+            >
+              <input
+                type="checkbox"
+                checked={formData.competences_declarees.includes(
+                  skill
+                )}
+                onChange={() =>
+                  handleMultiChange(
+                    "competences_declarees",
+                    skill
+                  )
+                }
+                disabled={disabled}
+              />
 
-      {/* Centres d&apos;intérêt */}
-      <div className="space-y-3 border-t border-gray-100 pt-2">
-        <h4 className="text-xs font-semibold uppercase text-[#078B45]">
+              <span>{labelize(skill)}</span>
+            </label>
+          ))}
+        </div>
+      </section>
+
+      {/* Centres d'intérêt */}
+      <section className="space-y-3 border-t border-gray-100 pt-4">
+        <h3 className="text-xs font-semibold uppercase text-[#078B45]">
           Centres d&apos;intérêt
-        </h4>
+        </h3>
 
-        <MultiSelect
-          title="Sélectionnez vos centres d&apos;intérêt"
-          values={CENTRES_INTERET}
-          selected={formData.centres_interet}
-          onChange={(values) =>
-            setFormData((prev) => ({
-              ...prev,
-              centres_interet: values,
-            }))
-          }
-          disabled={disabled}
-        />
-      </div>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {INTERESTS.map((interest) => (
+            <label
+              key={interest}
+              className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-100 p-2 text-sm hover:bg-gray-50"
+            >
+              <input
+                type="checkbox"
+                checked={formData.centres_interet.includes(
+                  interest
+                )}
+                onChange={() =>
+                  handleMultiChange(
+                    "centres_interet",
+                    interest
+                  )
+                }
+                disabled={disabled}
+              />
 
-      {/* Activités / projets */}
-      <div className="space-y-3 border-t border-gray-100 pt-2">
-        <h4 className="text-xs font-semibold uppercase text-[#078B45]">
-          Activités et projets
-        </h4>
+              <span>{labelize(interest)}</span>
+            </label>
+          ))}
+        </div>
+      </section>
 
-        <MultiSelect
-          title="Sélectionnez les activités ou projets auxquels vous avez participé"
-          values={ACTIVITES}
-          selected={formData.activites_projets}
-          onChange={(values) =>
-            setFormData((prev) => ({
-              ...prev,
-              activites_projets: values,
-            }))
-          }
-          disabled={disabled}
-        />
-      </div>
+      {/* Activités */}
+      <section className="space-y-3 border-t border-gray-100 pt-4">
+        <h3 className="text-xs font-semibold uppercase text-[#078B45]">
+          Activités &amp; projets
+        </h3>
+
+        <div className="grid grid-cols-1 gap-2">
+          {ACTIVITIES.map((activity) => (
+            <label
+              key={activity}
+              className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-100 p-2 text-sm hover:bg-gray-50"
+            >
+              <input
+                type="checkbox"
+                checked={formData.activites_projets.includes(
+                  activity
+                )}
+                onChange={() =>
+                  handleMultiChange(
+                    "activites_projets",
+                    activity
+                  )
+                }
+                disabled={disabled}
+              />
+
+              <span>{activity}</span>
+            </label>
+          ))}
+        </div>
+      </section>
 
       {/* Préférences */}
-      <div className="space-y-3 border-t border-gray-100 pt-2">
-        <h4 className="text-xs font-semibold uppercase text-[#078B45]">
+      <section className="space-y-4 border-t border-gray-100 pt-4">
+        <h3 className="text-xs font-semibold uppercase text-[#078B45]">
           Perspectives d&apos;avenir
-        </h4>
+        </h3>
 
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[#2E3350]">
-            Préférence professionnelle{" "}
-            <span className="text-red-500">*</span>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-[#2E3350]">
+            Préférence professionnelle
           </label>
 
           <select
@@ -780,11 +570,10 @@ export default function OrientationForm({
             }
             onChange={handleTextChange}
             disabled={disabled}
-            required
-            className={inputClass}
+            className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm"
           >
             <option value="">
-              Sélectionnez votre préférence
+              Sélectionnez une préférence
             </option>
 
             {PROFESSIONAL_PREFERENCES.map(
@@ -800,10 +589,9 @@ export default function OrientationForm({
           </select>
         </div>
 
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[#2E3350]">
-            Environnement de travail souhaité{" "}
-            <span className="text-red-500">*</span>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-[#2E3350]">
+            Environnement de travail souhaité
           </label>
 
           <select
@@ -813,11 +601,10 @@ export default function OrientationForm({
             }
             onChange={handleTextChange}
             disabled={disabled}
-            required
-            className={inputClass}
+            className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm"
           >
             <option value="">
-              Sélectionnez votre environnement
+              Sélectionnez un environnement
             </option>
 
             {WORK_ENVIRONMENTS.map((item) => (
@@ -830,10 +617,10 @@ export default function OrientationForm({
             ))}
           </select>
         </div>
-      </div>
+      </section>
 
       {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600">
+        <p className="rounded-lg bg-red-50 p-3 text-sm font-medium text-red-600">
           {error}
         </p>
       )}
@@ -841,11 +628,11 @@ export default function OrientationForm({
       <button
         type="submit"
         disabled={disabled}
-        className="w-full rounded-lg bg-[#1565C0] py-2.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-lg bg-[#1565C0] py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {disabled
           ? "Analyse en cours..."
-          : "Trouver ma filière"}
+          : "Obtenir ma recommandation"}
       </button>
     </form>
   );
