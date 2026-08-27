@@ -6,21 +6,20 @@ import type {
   OrientationFormData,
 } from "@/types/chat";
 
-/**
- * URL de base du backend.
- *
- * En local :
- * NEXT_PUBLIC_API_URL=http://localhost:8000
- *
- * En production :
- * NEXT_PUBLIC_API_URL=https://orientia-codea-backend.onrender.com
- */
-const API_BASE_URL =
-  process.env.NEXT_API_URL?.replace(/\/$/, "") ?? "https://orientia-codea-backend.onrender.com"
 
-/**
- * Erreur spécifique aux appels API.
- */
+// ============================================================
+// URL DU BACKEND
+// ============================================================
+
+const API_BASE_URL =
+  process.env.NEXT_API_URL?.replace(/\/$/, "") ??
+  "https://orientia-codea-backend.onrender.com";
+
+
+// ============================================================
+// ERREUR API
+// ============================================================
+
 export class ApiError extends Error {
   status: number;
 
@@ -35,39 +34,76 @@ export class ApiError extends Error {
   }
 }
 
-/**
- * Effectue une requête POST JSON vers le backend.
- */
+
+// ============================================================
+// POST JSON
+// ============================================================
+
 async function postJSON<T>(
   path: string,
   body: unknown
 ): Promise<T> {
+
   let response: Response;
 
   try {
+
+    console.log(
+      "[API] POST:",
+      `${API_BASE_URL}${path}`
+    );
+
+    console.log(
+      "[API] BODY:",
+      body
+    );
+
     response = await fetch(
       `${API_BASE_URL}${path}`,
       {
         method: "POST",
+
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
+
         body: JSON.stringify(body),
       }
     );
-  } catch {
+
+  } catch (error) {
+
+    console.error(
+      "[API] Erreur réseau:",
+      error
+    );
+
     throw new ApiError(
       "Impossible de contacter le serveur. Vérifiez votre connexion.",
       0
     );
   }
 
+
+  // ==========================================================
+  // REPONSE HTTP EN ERREUR
+  // ==========================================================
+
   if (!response.ok) {
-    let message = `Erreur serveur (${response.status})`;
+
+    let message =
+      `Erreur serveur (${response.status})`;
 
     try {
-      const data = await response.json();
+
+      const data =
+        await response.json();
+
+      console.error(
+        "[API] Réponse erreur:",
+        data
+      );
 
       if (
         data &&
@@ -75,6 +111,7 @@ async function postJSON<T>(
       ) {
         message = data.detail;
       }
+
     } catch {
       // On conserve le message générique.
     }
@@ -85,9 +122,30 @@ async function postJSON<T>(
     );
   }
 
+
+  // ==========================================================
+  // LECTURE DE LA REPONSE
+  // ==========================================================
+
   try {
-    return (await response.json()) as T;
+
+    const data =
+      await response.json();
+
+    console.log(
+      "[API] STATUS:",
+      response.status
+    );
+
+    console.log(
+      "[API] RESPONSE:",
+      data
+    );
+
+    return data as T;
+
   } catch {
+
     throw new ApiError(
       "Le serveur a retourné une réponse invalide.",
       response.status
@@ -95,45 +153,90 @@ async function postJSON<T>(
   }
 }
 
-/**
- * Envoie un message au chatbot.
- *
- * Le backend détermine ensuite s'il s'agit :
- *
- * - d'une réponse RAG ;
- * - d'une demande de formulaire ;
- * - d'une recommandation.
- */
-export function sendChatMessage(
+
+// ============================================================
+// CHAT RAG
+// ============================================================
+
+export async function sendChatMessage(
   message: string,
   sessionId: string | null
 ): Promise<BackendChatResponse> {
+
   const payload: BackendChatRequest = {
+
     message,
+
     session_id: sessionId,
+
     profile: null,
   };
 
-  return postJSON<BackendChatResponse>(
-    "/api/chat",
-    payload
-  );
+
+  const response =
+    await postJSON<BackendChatResponse>(
+      "/api/chat",
+      payload
+    );
+
+
+  // ==========================================================
+  // VERIFICATION DU FORMAT
+  // ==========================================================
+
+  if (
+    !response ||
+    typeof response.answer !== "string"
+  ) {
+
+    console.error(
+      "[API] Format de réponse inattendu:",
+      response
+    );
+
+    throw new ApiError(
+      "Le serveur a retourné une réponse dans un format inattendu.",
+      200
+    );
+  }
+
+
+  return {
+
+    answer: response.answer,
+
+    sources:
+      Array.isArray(response.sources)
+        ? response.sources
+        : [],
+
+    chunks:
+      typeof response.chunks === "number"
+        ? response.chunks
+        : 0,
+  };
 }
 
-/**
- * Envoie le profil complet au backend pour obtenir
- * une recommandation personnalisée.
- */
-export function submitOrientationForm(
+
+// ============================================================
+// FORMULAIRE D'ORIENTATION
+// ============================================================
+
+export async function submitOrientationForm(
   data: OrientationFormData,
   sessionId: string | null
 ): Promise<BackendChatResponse> {
+
   const payload: BackendChatRequest = {
+
     message:
       "Voici mon profil d'orientation. Je souhaite recevoir une recommandation de parcours.",
+
     session_id: sessionId,
+
     profile: data,
   };
+
 
   return postJSON<BackendChatResponse>(
     "/api/chat",

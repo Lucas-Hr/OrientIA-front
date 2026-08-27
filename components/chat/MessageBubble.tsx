@@ -1,5 +1,8 @@
 // components/chat/MessageBubble.tsx
 
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 import type {
   ChatMessage,
   OrientationFormData,
@@ -38,7 +41,7 @@ export default function MessageBubble({
       <div
         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
           isUser
-            ? "text-[#1565C0] bg-white shadow-md"
+            ? "bg-white text-[#1565C0] shadow-md"
             : "bg-white text-[#078B45] shadow-md"
         }`}
       >
@@ -68,9 +71,129 @@ export default function MessageBubble({
           />
         ) : (
           <>
-            <p className="whitespace-pre-wrap">
-              {message.content}
-            </p>
+            <div
+              className={
+                isUser
+                  ? "prose prose-sm max-w-none prose-p:text-white prose-headings:text-white prose-strong:text-white prose-li:text-white"
+                  : "prose prose-sm max-w-none prose-p:text-[#2E3350] prose-headings:text-[#092328] prose-strong:text-[#092328] prose-li:text-[#2E3350]"
+              }
+            >
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  p: ({ children }) => (
+                    <p className="mb-2 last:mb-0 whitespace-pre-wrap">
+                      {children}
+                    </p>
+                  ),
+
+                  h1: ({ children }) => (
+                    <h1 className="mb-3 mt-2 text-lg font-bold">
+                      {children}
+                    </h1>
+                  ),
+
+                  h2: ({ children }) => (
+                    <h2 className="mb-2 mt-3 text-base font-bold">
+                      {children}
+                    </h2>
+                  ),
+
+                  h3: ({ children }) => (
+                    <h3 className="mb-2 mt-3 text-[15px] font-bold">
+                      {children}
+                    </h3>
+                  ),
+
+                  ul: ({ children }) => (
+                    <ul className="mb-3 ml-5 list-disc space-y-1">
+                      {children}
+                    </ul>
+                  ),
+
+                  ol: ({ children }) => (
+                    <ol className="mb-3 ml-5 list-decimal space-y-1">
+                      {children}
+                    </ol>
+                  ),
+
+                  li: ({ children }) => (
+                    <li className="pl-1">
+                      {children}
+                    </li>
+                  ),
+
+                  strong: ({ children }) => (
+                    <strong className="font-bold">
+                      {children}
+                    </strong>
+                  ),
+
+                  em: ({ children }) => (
+                    <em>{children}</em>
+                  ),
+
+                  hr: () => (
+                    <hr
+                      className={
+                        isUser
+                          ? "my-3 border-white/30"
+                          : "my-3 border-gray-200"
+                      }
+                    />
+                  ),
+
+                  blockquote: ({ children }) => (
+                    <blockquote
+                      className={
+                        isUser
+                          ? "my-2 border-l-4 border-white/40 pl-3 italic"
+                          : "my-2 border-l-4 border-[#078B45]/30 pl-3 italic"
+                      }
+                    >
+                      {children}
+                    </blockquote>
+                  ),
+
+                  code: ({
+                    children,
+                    className,
+                  }) => (
+                    <code
+                      className={
+                        className
+                          ? className
+                          : isUser
+                            ? "rounded bg-white/10 px-1 py-0.5 text-sm"
+                            : "rounded bg-gray-100 px-1 py-0.5 text-sm"
+                      }
+                    >
+                      {children}
+                    </code>
+                  ),
+
+                  a: ({
+                    children,
+                    href,
+                  }) => (
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={
+                        isUser
+                          ? "font-medium underline"
+                          : "font-medium text-[#1565C0] underline"
+                      }
+                    >
+                      {children}
+                    </a>
+                  ),
+                }}
+              >
+                {message.content ?? ""}
+              </ReactMarkdown>
+            </div>
 
             {message.sources &&
               message.sources.length > 0 && (
@@ -252,40 +375,55 @@ function SourceList({
   return (
     <div className="mt-4 border-t border-gray-200 pt-3">
       <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#1565C0]">
-        Sources
+        Sources consultées
       </p>
 
       <div className="space-y-2">
-        {sources.map((source, index) => (
-          <div
-            key={
-              source.id ??
-              `${source.title}-${index}`
-            }
-            className="rounded-lg bg-[#F7F5F1] p-2 text-xs"
-          >
-            {source.url ? (
-              <a
-                href={source.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium text-[#1565C0] underline"
-              >
-                {source.title}
-              </a>
-            ) : (
-              <p className="font-medium text-[#2E3350]">
-                {source.title}
-              </p>
-            )}
+        {sources.map((source, index) => {
+          const sourceTitle =
+            source.title ||
+            source.name ||
+            `Source ${index + 1}`;
 
-            {source.excerpt && (
-              <p className="mt-1 text-gray-500">
-                {source.excerpt}
-              </p>
-            )}
-          </div>
-        ))}
+          return (
+            <div
+              key={
+                source.id ??
+                `${sourceTitle}-${index}`
+              }
+              className="rounded-lg bg-[#F7F5F1] p-3 text-xs ring-1 ring-[#078B45]/10"
+            >
+              <div className="flex items-start gap-2">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#078B45]/10 text-[10px] font-bold text-[#078B45]">
+                  {index + 1}
+                </span>
+
+                <div className="min-w-0 flex-1">
+                  {source.url ? (
+                    <a
+                      href={source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-[#1565C0] underline"
+                    >
+                      {sourceTitle}
+                    </a>
+                  ) : (
+                    <p className="font-semibold text-[#2E3350]">
+                      {sourceTitle}
+                    </p>
+                  )}
+
+                  {source.excerpt && (
+                    <p className="mt-1 whitespace-pre-wrap leading-relaxed text-gray-500">
+                      {source.excerpt}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
