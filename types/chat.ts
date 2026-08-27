@@ -1,80 +1,171 @@
-// types/chat.ts
+// ============================================================
+// TYPES GENERAUX
+// ============================================================
 
-export type Role = "user" | "assistant";
+export type Role =
+  | "user"
+  | "assistant";
 
-/** Type de contenu affiché dans une bulle de chat */
-export type MessageKind = "text" | "form_request" | "form_summary";
 
-export interface ChatMessage {
-  id: string;
-  role: Role;
-  kind: MessageKind;
-  /** Texte à afficher (message normal, ou intro avant le formulaire) */
-  content?: string;
-  /** Rempli uniquement pour kind === "form_summary" (récap après envoi du form) */
-  formData?: OrientationFormData;
-  createdAt: number;
+// ============================================================
+// TYPE DE MESSAGE AFFICHABLE
+// ============================================================
+
+export type MessageKind =
+  | "text"
+  | "form_request"
+  | "form_summary"
+  | "recommendation";
+
+
+// ============================================================
+// TYPES DE REPONSE BACKEND
+// ============================================================
+
+export type BackendResponseType =
+  | "answer"
+  | "formrequest"
+  | "recommendation";
+
+
+// ============================================================
+// SOURCE DOCUMENTAIRE
+// ============================================================
+
+export interface Source {
+  id?: string | null;
+
+  title: string;
+
+  url?: string | null;
+
+  source_type?: string | null;
+
+  consulted_at?: string | null;
+
+  excerpt?: string | null;
 }
 
-export interface BacNote {
-  matiere: string;
-  note: number; // sur 20
+
+// ============================================================
+// RECOMMANDATION
+// ============================================================
+
+export interface Recommendation {
+  parcours: string;
+
+  probabilite: number;
 }
 
-// types/chat.ts
+
+// ============================================================
+// RESULTAT ML
+// ============================================================
+
+export interface MLResult {
+  source: string;
+
+  modele: string;
+
+  resultats: Recommendation[];
+}
+
+
+// ============================================================
+// PROFIL D'ORIENTATION
+// ============================================================
 
 export interface OrientationFormData {
+
   serie_bac: string;
+
   note_mathematiques: number;
+
   note_physique_chimie: number;
+
   note_svt_biologie: number;
+
   note_francais: number;
+
   note_anglais: number;
+
   note_histoire_geo: number;
+
   note_economie_gestion: number;
+
   note_informatique_nsi: number;
-  matieres_preferees: string;
-  competences_declarees: string;
-  centres_interet: string;
-  activites_projets: string;
+
+  matieres_preferees: string[];
+
+  competences_declarees: string[];
+
+  centres_interet: string[];
+
+  activites_projets: string[];
+
   preference_professionnelle: string;
+
   environnement_travail_souhaite: string;
 }
 
-/* ---------------------------------------------------------------------- */
-/*  Contrat avec le backend FastAPI                                       */
-/* ---------------------------------------------------------------------- */
 
-/** Ce que le backend peut demander d'afficher côté client */
-export type BackendResponseType = "text" | "form_request";
-
-export interface BackendChatResponse {
-  type: BackendResponseType;
-  /** Message à afficher. Pour "form_request", sert d'intro avant le formulaire. */
-  content?: string;
-  session_id: string;
-}
+// ============================================================
+// REQUETE CHAT
+// ============================================================
 
 export interface BackendChatRequest {
+
   message: string;
+
   session_id: string | null;
+
+  profile?: OrientationFormData | null;
 }
 
-export interface BackendFormPayload {
-  session_id: string | null;
-  serie_bac: string | null,
-  note_mathematiques: Number | null,
-  note_physique_chimie: Number | null,
-  note_svt_biologie: Number | null,
-  note_francais: Number | null,
-  note_anglais: Number | null,
-  note_histoire_geo: Number | null,
-  note_economie_gestion: Number | null,
-  note_informatique_nsi: Number | null,
-  matieres_preferees: string | null,
-  competences_declarees: string | null,
-  centres_interet: string | null,
-  activites_projets: string | null,
-  preference_professionnelle: string | null,
-  environnement_travail_souhaite: string | null,
+
+// ============================================================
+// REPONSE CHAT
+// ============================================================
+
+export interface BackendChatResponse {
+
+  type: BackendResponseType;
+
+  message: string;
+
+  session_id: string;
+
+  sources: Source[];
+
+  recommendations: MLResult | null;
+
+  confidence: number | null;
+
+  uncertainty: string | null;
+
+  missing_information: string[];
+}
+
+
+// ============================================================
+// MESSAGE INTERNE DE L'INTERFACE
+// ============================================================
+
+export interface ChatMessage {
+
+  id: string;
+
+  role: Role;
+
+  kind: MessageKind;
+
+  content?: string;
+
+  formData?: OrientationFormData;
+
+  recommendations?: Recommendation[];
+
+  sources?: Source[];
+
+  createdAt: number;
 }
