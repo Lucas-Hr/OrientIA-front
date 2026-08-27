@@ -30,7 +30,7 @@ export default function OrientationResults({
     <div className="space-y-3">
 
       <div>
-        <p className="font-semibold text-[#1565C0]">
+        <p className="font-semibold text-[#092328]">
           Parcours recommandés
         </p>
 
