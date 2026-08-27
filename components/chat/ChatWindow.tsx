@@ -79,11 +79,13 @@ export default function ChatWindow() {
     }
   }
 
-  async function handleFormSubmit(data: OrientationFormData) {
+  async function handleFormSubmit(
+    data: OrientationFormData
+  ) {
     setErrorBanner(null);
     setIsLoading(true);
 
-    // Affiche un récapitulatif du profil envoyé, côté utilisateur.
+    // Affiche le profil envoyé dans la conversation.
     pushMessage({
       id: makeId(),
       role: "user",
@@ -91,34 +93,51 @@ export default function ChatWindow() {
       formData: data,
       createdAt: Date.now(),
     });
+
     setPendingForm(false);
 
     try {
-     const res = await submitOrientationForm({
-      session_id: sessionId,
-      serie_bac: data.serie_bac,
-      note_mathematiques: data.note_mathematiques,
-      note_physique_chimie: data.note_physique_chimie,
-      note_svt_biologie: data.note_svt_biologie,
-      note_francais: data.note_francais,
-      note_anglais: data.note_anglais,
-      note_histoire_geo: data.note_histoire_geo,
-      note_economie_gestion: data.note_economie_gestion,
-      note_informatique_nsi: data.note_informatique_nsi,
-      matieres_preferees: data.matieres_preferees,
-      competences_declarees: data.competences_declarees,
-      centres_interet: data.centres_interet,
-      activites_projets: data.activites_projets,
-      preference_professionnelle: data.preference_professionnelle,
-      environnement_travail_souhaite: data.environnement_travail_souhaite,
-    });
-      setSessionId(res.session_id);
+      const res = await submitOrientationForm({
+        serie_bac: data.serie_bac,
+
+        note_mathematiques:
+          data.note_mathematiques,
+        note_physique_chimie:
+          data.note_physique_chimie,
+        note_svt_biologie:
+          data.note_svt_biologie,
+        note_francais:
+          data.note_francais,
+        note_anglais:
+          data.note_anglais,
+        note_histoire_geo:
+          data.note_histoire_geo,
+        note_economie_gestion:
+          data.note_economie_gestion,
+        note_informatique_nsi:
+          data.note_informatique_nsi,
+
+        matieres_preferees:
+          data.matieres_preferees,
+        competences_declarees:
+          data.competences_declarees,
+        centres_interet:
+          data.centres_interet,
+        activites_projets:
+          data.activites_projets,
+
+        preference_professionnelle:
+          data.preference_professionnelle,
+        environnement_travail_souhaite:
+          data.environnement_travail_souhaite,
+      });
 
       pushMessage({
         id: makeId(),
         role: "assistant",
-        kind: "text",
-        content: res.content ?? "Voici mon analyse de votre profil.",
+        kind: "orientation_result",
+        orientationResult:
+          res.recommendations,
         createdAt: Date.now(),
       });
     } catch (err) {

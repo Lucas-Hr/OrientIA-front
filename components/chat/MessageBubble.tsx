@@ -1,12 +1,18 @@
 // components/chat/MessageBubble.tsx
-import type { ChatMessage, OrientationFormData } from "@/types/chat";
+import type {
+  ChatMessage,
+  OrientationFormData,
+  OrientationResult,
+} from "@/types/chat";
 import { Compass,User } from "lucide-react";
+
 const SERIE_LABELS: Record<string, string> = {
-  A: "Série A — Littéraire",
-  C: "Série C — Maths & Sciences Physiques",
-  D: "Série D — Maths & SVT",
-  OSE: "Série OSE — Option Sciences Économiques",
-  TECHNIQUE: "Série Technique",
+  A2: "Série A2",
+  C: "Série C",
+  D: "Série D",
+  S: "Série S",
+  Techniques_agricoles: "Techniques agricoles",
+  Toute_serie: "Toute série",
 };
 
 export default function MessageBubble({ message }: { message: ChatMessage }) {
@@ -29,10 +35,18 @@ export default function MessageBubble({ message }: { message: ChatMessage }) {
             : "rounded-bl-sm bg-white text-[#2E3350] ring-1 ring-[#078B45]/10"
         }`}
       >
-        {message.kind === "form_summary" && message.formData ? (
+        {message.kind === "form_summary" &&
+        message.formData ? (
           <FormSummary data={message.formData} />
+        ) : message.kind === "orientation_result" &&
+          message.orientationResult ? (
+          <OrientationResultView
+            data={message.orientationResult}
+          />
         ) : (
-          <p className="whitespace-pre-wrap">{message.content}</p>
+          <p className="whitespace-pre-wrap">
+            {message.content}
+          </p>
         )}
       </div>
     </div>
@@ -100,6 +114,67 @@ function FormSummary({ data }: { data: OrientationFormData }) {
           {data.environnement_travail_souhaite}
         </div>
       </div>
+    </div>
+  );
+}
+
+function OrientationResultView({
+  data,
+}: {
+  data: OrientationResult;
+}) {
+  return (
+    <div className="space-y-4">
+      <div>
+        <p className="font-semibold text-[#1565C0]">
+          🎓 Recommandations d&apos;orientation
+        </p>
+
+        <p className="mt-1 text-xs text-gray-500">
+          Voici les parcours les mieux classés pour
+          votre profil.
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        {data.resultats.map((resultat, index) => (
+          <div
+            key={resultat.parcours}
+            className="rounded-xl border border-[#078B45]/15 bg-[#F7F5F1] p-3"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-[#2E3350]">
+                  {index === 0 && "🥇 "}
+                  {index === 1 && "🥈 "}
+                  {index === 2 && "🥉 "}
+                  {resultat.parcours}
+                </p>
+              </div>
+
+              <span className="text-sm font-semibold text-[#078B45]">
+                {(resultat.probabilite * 100).toFixed(1)} %
+              </span>
+            </div>
+
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-gray-200">
+              <div
+                className="h-full rounded-full bg-[#078B45]"
+                style={{
+                  width: `${Math.min(
+                    resultat.probabilite * 100,
+                    100
+                  )}%`,
+                }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-[11px] text-gray-400">
+        Modèle utilisé : {data.modele}
+      </p>
     </div>
   );
 }
