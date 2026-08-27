@@ -17,7 +17,7 @@ import type {
  */
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
-  "https://localhost:8000";
+  "http://localhost:8000";
 
 /**
  * Erreur spécifique aux appels API.
