@@ -19,23 +19,17 @@ export type MessageKind =
 
 
 // ============================================================
-// TYPES DE REPONSE BACKEND
-// ============================================================
-
-export type BackendResponseType =
-  | "answer"
-  | "formrequest"
-  | "recommendation";
-
-
-// ============================================================
 // SOURCE DOCUMENTAIRE
 // ============================================================
 
 export interface Source {
   id?: string | null;
 
-  title: string;
+  name: string;
+
+  page?: string | null;
+
+  title?: string | null;
 
   url?: string | null;
 
@@ -76,7 +70,6 @@ export interface MLResult {
 // ============================================================
 
 export interface OrientationFormData {
-
   serie_bac: string;
 
   note_mathematiques: number;
@@ -114,36 +107,24 @@ export interface OrientationFormData {
 // ============================================================
 
 export interface BackendChatRequest {
-
   message: string;
 
-  session_id: string | null;
+  session_id?: string | null;
 
   profile?: OrientationFormData | null;
 }
 
 
 // ============================================================
-// REPONSE CHAT
+// REPONSE RAG ACTUELLE DU BACKEND
 // ============================================================
 
 export interface BackendChatResponse {
-
-  type: BackendResponseType;
-
-  message: string;
-
-  session_id: string;
+  answer: string;
 
   sources: Source[];
 
-  recommendations: MLResult | null;
-
-  confidence: number | null;
-
-  uncertainty: string | null;
-
-  missing_information: string[];
+  chunks: number;
 }
 
 
@@ -152,7 +133,6 @@ export interface BackendChatResponse {
 // ============================================================
 
 export interface ChatMessage {
-
   id: string;
 
   role: Role;
