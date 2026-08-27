@@ -38,7 +38,7 @@ export default function MessageBubble({
       <div
         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
           isUser
-            ? "bg-[#1565C0] text-white"
+            ? "text-[#1565C0] bg-white shadow-md"
             : "bg-white text-[#078B45] shadow-md"
         }`}
       >
@@ -92,7 +92,7 @@ function RecommendationList({
 }) {
   return (
     <div className="space-y-4">
-      <p className="font-semibold text-[#1565C0]">
+      <p className="font-semibold text-[#092328]">
         Voici les parcours qui correspondent le
         mieux à votre profil :
       </p>
@@ -146,7 +146,7 @@ function FormSummary({
 }) {
   return (
     <div className="space-y-3 text-xs">
-      <p className="font-semibold uppercase tracking-wide text-[#1565C0]">
+      <p className="font-semibold uppercase tracking-wide text-white">
         Profil envoyé
       </p>
 

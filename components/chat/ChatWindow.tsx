@@ -296,7 +296,7 @@ export default function ChatWindow() {
 
         <div>
           <p className="text-sm font-semibold text-white">
-            Assistant d&apos;orientation ISPM
+            OrientIA
           </p>
 
           <p className="text-xs text-white/80">

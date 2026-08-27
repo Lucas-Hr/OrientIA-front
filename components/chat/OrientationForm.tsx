@@ -558,7 +558,7 @@ export default function OrientationForm({
     >
 
       <div>
-        <p className="font-semibold uppercase tracking-wide text-[#1565C0]">
+        <p className="font-semibold uppercase tracking-wide text-[#092328]">
           Profil d&apos;orientation
         </p>
 
@@ -725,7 +725,7 @@ export default function OrientationForm({
                   disabled={disabled}
                 />
 
-                <span>
+                <span className="text-[#092328]">
                   {labelize(subject)}
                 </span>
 
@@ -775,7 +775,7 @@ export default function OrientationForm({
                   disabled={disabled}
                 />
 
-                <span>
+                <span className="text-[#092328]">
                   {labelize(skill)}
                 </span>
 
@@ -825,7 +825,7 @@ export default function OrientationForm({
                   disabled={disabled}
                 />
 
-                <span>
+                <span className="text-[#092328]">
                   {labelize(interest)}
                 </span>
 
@@ -882,7 +882,7 @@ export default function OrientationForm({
                   disabled={disabled}
                 />
 
-                <span>
+                <span className="text-[#092328]">
                   {activity}
                 </span>
 
@@ -911,7 +911,7 @@ export default function OrientationForm({
 
         <div>
 
-          <label className="mb-1 block text-sm font-medium text-[#2E3350]">
+          <label className="mb-1 block text-sm font-medium text-[#092328]">
             Préférence professionnelle
           </label>
 
@@ -922,7 +922,7 @@ export default function OrientationForm({
             }
             onChange={handleTextChange}
             disabled={disabled}
-            className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm"
+            className=" text-[#092328] w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm"
           >
 
             <option value="">
@@ -951,7 +951,7 @@ export default function OrientationForm({
 
         <div>
 
-          <label className="mb-1 block text-sm font-medium text-[#2E3350]">
+          <label className="mb-1 block text-sm font-medium text-[#092328]">
             Environnement de travail souhaité
           </label>
 
@@ -962,7 +962,7 @@ export default function OrientationForm({
             }
             onChange={handleTextChange}
             disabled={disabled}
-            className="w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm"
+            className="text-[#092328] w-full rounded-lg border border-[#078B45]/15 bg-[#F7F5F1] px-3 py-2 text-sm"
           >
 
             <option value="">

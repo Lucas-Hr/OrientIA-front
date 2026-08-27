@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ORIENT'IA",
+  title: "OrientIA",
   description:
     "Assistant intelligent d'orientation vers les formations de l'ISPM.",
 };
